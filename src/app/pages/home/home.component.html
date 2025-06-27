@@ -1,0 +1,174 @@
+<div class="max-w-4xl mx-auto mt-5 p-4">
+  <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">
+    Expense Tracker Dashboard
+  </h1>
+
+  <!-- Dashboard Summary -->
+  <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-10">
+    <div
+      class="bg-gradient-to-br from-green-400 to-green-600 text-white p-6 rounded-lg text-center"
+    >
+      <p class="text-base opacity-90 mb-2">Total Income</p>
+      <span class="text-3xl font-bold">{{
+        totalIncome$ | async | currency : "THB"
+      }}</span>
+    </div>
+    <div
+      class="bg-gradient-to-br from-red-400 to-red-600 text-white p-6 rounded-lg text-center"
+    >
+      <p class="text-base opacity-90 mb-2">Total Expenses</p>
+      <span class="text-3xl font-bold">{{
+        totalExpenses$ | async | currency : "THB"
+      }}</span>
+    </div>
+    <div
+      class="text-white p-6 rounded-lg text-center"
+      [ngClass]="{
+        'bg-teal-600': (netBalance$ | async)! >= 0,
+        'bg-yellow-500': (netBalance$ | async)! < 0
+      }"
+    >
+      <p class="text-base opacity-90 mb-2">Net Balance</p>
+      <span class="text-3xl font-bold">{{
+        netBalance$ | async | currency : "THB"
+      }}</span>
+    </div>
+  </section>
+
+  <!-- Add/Edit Form -->
+  <section class="bg-white p-6 rounded-lg shadow mb-10">
+    <h3 class="text-xl font-semibold text-gray-800 mb-4">
+      {{ isEditing ? "Edit" : "Add New" }} Transaction
+    </h3>
+    <form #expenseForm="ngForm" (ngSubmit)="onSubmit(expenseForm)">
+      <div class="flex flex-col md:flex-row gap-4 mb-4">
+        <div class="flex flex-col flex-1">
+          <label
+            class="text-sm font-medium text-gray-700 mb-1"
+            for="description"
+            >Description</label
+          >
+          <input
+            class="border border-gray-300 rounded px-3 py-2"
+            type="text"
+            id="description"
+            name="description"
+            [(ngModel)]="formModel.description"
+            required
+          />
+        </div>
+        <div class="flex flex-col flex-1">
+          <label class="text-sm font-medium text-gray-700 mb-1" for="amount"
+            >Amount</label
+          >
+          <input
+            class="border border-gray-300 rounded px-3 py-2"
+            type="number"
+            id="amount"
+            name="amount"
+            [(ngModel)]="formModel.amount"
+            required
+            min="0.01"
+            placeholder="0.00"
+          />
+        </div>
+      </div>
+      <div class="flex flex-col md:flex-row gap-4 mb-4">
+        <div class="flex flex-col flex-1">
+          <label class="text-sm font-medium text-gray-700 mb-1" for="category"
+            >Category</label
+          >
+          <select
+            class="border border-gray-300 rounded px-3 py-2"
+            id="category"
+            name="category"
+            [(ngModel)]="formModel.category"
+            required
+          >
+            <option [ngValue]="null" disabled>-- Select a Category --</option>
+            <option *ngFor="let cat of expenseCategories" [value]="cat">
+              {{ cat }}
+            </option>
+          </select>
+        </div>
+        <div class="flex flex-col flex-1">
+          <label class="text-sm font-medium text-gray-700 mb-1" for="date"
+            >Date</label
+          >
+          <input
+            class="border border-gray-300 rounded px-3 py-2"
+            type="date"
+            id="date"
+            name="date"
+            [(ngModel)]="formModel.date"
+            required
+          />
+        </div>
+      </div>
+      <div class="flex justify-end gap-3">
+        <button
+          type="submit"
+          [disabled]="expenseForm.invalid || (isLoading$ | async)"
+          class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+        >
+          {{ isEditing ? "Update" : "Add" }}
+        </button>
+        <button
+          type="button"
+          (click)="onCancelEdit(expenseForm)"
+          *ngIf="isEditing"
+          class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Transaction List -->
+  <section class="bg-white p-6 rounded-lg shadow">
+    <h3 class="text-xl font-semibold text-gray-800 mb-4">
+      Recent Transactions
+    </h3>
+    <div *ngIf="isLoading$ | async" class="text-gray-600 mb-3">Loading...</div>
+    <ul class="divide-y divide-gray-200">
+      <li
+        *ngFor="let expense of allExpenses$ | async"
+        class="flex justify-between items-center py-4"
+        [ngClass]="{
+          'text-green-600': expense.category === 'Income',
+          'text-red-500': expense.category !== 'Income'
+        }"
+      >
+        <div class="flex flex-col gap-1 text-gray-800">
+          <span class="text-xs uppercase text-gray-400 font-semibold">{{
+            expense.category
+          }}</span>
+          <span class="text-lg">{{ expense.description }}</span>
+          <span class="text-sm text-gray-500">{{
+            expense.date | date : "mediumDate"
+          }}</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="text-lg font-bold min-w-[100px] text-right text-inherit">
+            {{ expense.amount | currency : "USD" }}
+          </span>
+          <div class="flex gap-2">
+            <button
+              (click)="onEdit(expense)"
+              class="border border-gray-300 px-3 py-1 text-sm rounded hover:bg-gray-100"
+            >
+              Edit
+            </button>
+            <button
+              (click)="onDelete(expense.id)"
+              class="border border-gray-300 px-3 py-1 text-sm rounded hover:bg-gray-100"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </section>
+</div>

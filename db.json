@@ -1,0 +1,46 @@
+{
+  "expenses": [
+    {
+      "id": "375d75a2-e85f-47e1-a7b7-1ab52750d4aa",
+      "description": "Salary",
+      "amount": 2000,
+      "category": "Income",
+      "date": "2025-06-18T00:00:00.000Z"
+    },
+    {
+      "id": "d101b04d-1daa-4a80-82d3-fb125f00a4d9",
+      "description": "coffee",
+      "amount": 10,
+      "category": "Food",
+      "date": "2025-06-11T00:00:00.000Z"
+    },
+    {
+      "id": "9f9d61ef-76fb-4097-8355-ca17f475b9bc",
+      "description": "dacz",
+      "amount": 13,
+      "category": "Shopping",
+      "date": "2025-06-20T00:00:00.000Z"
+    },
+    {
+      "id": "63ba23bc-d3dc-4eab-a4f1-42af4e58579d",
+      "description": "500",
+      "amount": 100,
+      "category": "Income",
+      "date": "2025-06-27T00:00:00.000Z"
+    },
+    {
+      "id": "3adf9bc6-7e29-4e9f-af6e-c645658de4df",
+      "description": "5000",
+      "amount": 1000,
+      "category": "Utilities",
+      "date": "2025-06-27T00:00:00.000Z"
+    },
+    {
+      "id": "2a2dd867-d945-423a-8c11-d126d4a5c54b",
+      "description": "computer",
+      "amount": 10000,
+      "category": "Shopping",
+      "date": "2025-06-07T00:00:00.000Z"
+    }
+  ]
+}
